@@ -1,0 +1,340 @@
+/*
+ * CareConnect global theme — dark blue + grey.
+ *
+ * The app's components use semantic HTML (<main>, <header>, <section>,
+ * headings, <button>, <input>, <form>, lists) with some inline styles. This
+ * stylesheet themes those shared elements so every page (sign-in + the three
+ * dashboards) shares one cohesive dark-blue/grey look without rewriting each
+ * component. A few higher-specificity rules override leftover inline styles.
+ */
+
+:root {
+  /* Core palette: deep navy blues + cool greys. */
+  --cc-bg: #0f172a;            /* page background — darkest navy  */
+  --cc-bg-2: #111c33;          /* subtle gradient stop            */
+  --cc-surface: #1b2740;       /* cards / panels                  */
+  --cc-surface-2: #223150;     /* raised / hover surface          */
+  --cc-border: #2d3e5f;        /* borders / dividers              */
+  --cc-border-strong: #3c527a;
+
+  --cc-text: #e6edf6;          /* primary text — near white       */
+  --cc-text-muted: #9aa8c0;    /* secondary / grey text           */
+  --cc-heading: #f2f6fc;
+
+  --cc-primary: #3b6ea8;       /* dark-ish blue — actions         */
+  --cc-primary-hover: #4d84c4;
+  --cc-primary-ring: rgba(77, 132, 196, 0.45);
+
+  --cc-success: #6fcf97;
+  --cc-success-bg: rgba(111, 207, 151, 0.14);
+  --cc-warning: #e4b363;
+  --cc-warning-bg: rgba(228, 179, 99, 0.14);
+  --cc-danger: #e5767b;
+  --cc-danger-bg: rgba(229, 118, 123, 0.14);
+
+  --cc-radius: 10px;
+  --cc-radius-sm: 7px;
+  --cc-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root {
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  background: radial-gradient(1200px 600px at 50% -10%, var(--cc-bg-2), var(--cc-bg)) fixed;
+  color: var(--cc-text);
+  font-family: "Inter", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont,
+    "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- Layout: main content column ---- */
+main {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 3rem;
+}
+
+/* ---- Headings ---- */
+h1, h2, h3, h4 { color: var(--cc-heading); line-height: 1.25; }
+h1 { font-size: 1.6rem; letter-spacing: 0.2px; }
+h2 { font-size: 1.2rem; }
+h3 { font-size: 1rem; }
+
+/* ---- Dashboard header bar (DashboardShell) ---- */
+main > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1.15rem;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(180deg, var(--cc-surface-2), var(--cc-surface));
+  border: 1px solid var(--cc-border);
+  border-radius: var(--cc-radius);
+  box-shadow: var(--cc-shadow);
+}
+main > header h1 { margin: 0; font-size: 1.35rem; }
+main > header::before {
+  /* little brand dot */
+  content: "";
+  position: absolute;
+}
+
+/* ---- Cards / panels: every <section> that isn't the header bar ---- */
+section {
+  background: var(--cc-surface);
+  border: 1px solid var(--cc-border);
+  border-radius: var(--cc-radius);
+  padding: 1.1rem 1.15rem;
+  margin-bottom: 1.15rem;
+  box-shadow: var(--cc-shadow);
+}
+/* The header's inner content wrapper shouldn't look like a card. */
+main > header + section,
+main > section:first-of-type { margin-top: 0; }
+
+section h2 { margin-top: 0; }
+
+/* ---- Paragraph / muted text ---- */
+p { color: var(--cc-text); }
+
+/* ---- Buttons ---- */
+button {
+  font: inherit;
+  color: var(--cc-text);
+  background: var(--cc-surface-2);
+  border: 1px solid var(--cc-border-strong);
+  border-radius: var(--cc-radius-sm);
+  padding: 0.5rem 0.95rem;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, transform 60ms ease;
+}
+button:hover:not(:disabled) { background: #28395c; border-color: var(--cc-primary); }
+button:active:not(:disabled) { transform: translateY(1px); }
+button:disabled { opacity: 0.55; cursor: not-allowed; }
+
+/* Primary action buttons (submit + inline-styled blue buttons). */
+button[type="submit"],
+button.cc-primary {
+  background: linear-gradient(180deg, var(--cc-primary-hover), var(--cc-primary));
+  border-color: var(--cc-primary);
+  color: #fff;
+  font-weight: 600;
+}
+button[type="submit"]:hover:not(:disabled),
+button.cc-primary:hover:not(:disabled) {
+  background: linear-gradient(180deg, #5a93d2, var(--cc-primary-hover));
+}
+
+/* ---- Inputs / selects / textareas ---- */
+input, select, textarea {
+  font: inherit;
+  color: var(--cc-text);
+  background: #0f1a30;
+  border: 1px solid var(--cc-border-strong);
+  border-radius: var(--cc-radius-sm);
+  padding: 0.5rem 0.6rem;
+}
+input::placeholder, textarea::placeholder { color: #6f7f9b; }
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--cc-primary-hover);
+  box-shadow: 0 0 0 3px var(--cc-primary-ring);
+}
+label { color: var(--cc-text-muted); font-size: 0.9rem; }
+
+/* ---- Lists ---- */
+ul { color: var(--cc-text); }
+li { border-color: var(--cc-border) !important; }
+
+/* ---- Links ---- */
+a { color: var(--cc-primary-hover); }
+
+/* ---- Status / alert text (role-based) ---- */
+[role="alert"] { color: var(--cc-danger) !important; }
+[role="status"] { color: var(--cc-success) !important; }
+
+/* ---- Sign-in screen: center the lone <main> form nicely ---- */
+main:has(> h1:only-of-type) { max-width: 420px; }
+form { display: block; }
+
+/* Make the sign-in form fields full width + stacked. */
+form > div { margin-bottom: 0.85rem; }
+form label { display: block; margin-bottom: 0.25rem; }
+form input { width: 100%; }
+
+/* ---- Scrollbar polish (webkit) ---- */
+::-webkit-scrollbar { width: 11px; height: 11px; }
+::-webkit-scrollbar-thumb {
+  background: var(--cc-border-strong);
+  border-radius: 999px;
+  border: 3px solid var(--cc-bg);
+}
+::-webkit-scrollbar-track { background: transparent; }
+
+/* =========================================================================
+ * Cover / sign-in page — centered, Times New Roman branding
+ * ========================================================================= */
+.cc-cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 2rem 1.25rem 3rem;
+  text-align: center;
+}
+
+.cc-cover__hero { max-width: 640px; }
+
+.cc-cover__mark {
+  font-size: 2.4rem;
+  color: var(--cc-primary-hover);
+  width: 64px;
+  height: 64px;
+  line-height: 64px;
+  margin: 0 auto 0.75rem;
+  border-radius: 50%;
+  background: rgba(77, 132, 196, 0.15);
+  border: 1px solid var(--cc-border-strong);
+  box-shadow: 0 0 0 6px rgba(77, 132, 196, 0.07);
+}
+
+.cc-cover__title {
+  font-family: "Times New Roman", Times, Georgia, serif;
+  font-size: clamp(3rem, 8vw, 5rem);
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin: 0;
+  color: #f4f8ff;
+  text-shadow: 0 2px 24px rgba(77, 132, 196, 0.35);
+}
+
+.cc-cover__tagline {
+  font-family: "Times New Roman", Times, Georgia, serif;
+  font-size: clamp(1.05rem, 2.5vw, 1.4rem);
+  font-style: italic;
+  color: var(--cc-text-muted);
+  margin: 0.4rem 0 0;
+}
+
+.cc-cover__card {
+  width: 100%;
+  max-width: 380px;
+  margin: 0 auto;
+  text-align: left;
+  background: linear-gradient(180deg, var(--cc-surface-2), var(--cc-surface));
+  border: 1px solid var(--cc-border);
+  border-radius: 14px;
+  padding: 1.5rem 1.4rem 1.6rem;
+  box-shadow: var(--cc-shadow);
+}
+
+.cc-cover__card-title {
+  font-family: "Times New Roman", Times, Georgia, serif;
+  text-align: center;
+  margin: 0 0 1rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.cc-cover__submit { width: 100%; margin-top: 0.4rem; padding: 0.6rem; }
+.cc-cover__error { margin: 0 0 0.6rem; }
+
+.cc-cover__footer {
+  font-family: "Times New Roman", Times, Georgia, serif;
+  font-style: italic;
+  color: var(--cc-text-muted);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* =========================================================================
+ * Overrides for components that still carry light inline backgrounds
+ * (clinician panels use inline #fff / #d0d7de; cover them on the dark theme).
+ * These selectors target the dashboard content region only.
+ * ========================================================================= */
+main section[aria-label] {
+  background: var(--cc-surface);
+  border-color: var(--cc-border);
+  color: var(--cc-text);
+}
+
+/* Clinician review-queue rows + any inline white buttons/cards inside
+   dashboard sections: repaint light surfaces to the dark palette. */
+main section [style*="background: #fff"],
+main section [style*="background:#fff"],
+main section [style*="background: #ffffff"],
+main section [style*="background: #f6f8fa"],
+main section [style*="background:#f6f8fa"] {
+  background: var(--cc-surface-2) !important;
+  color: var(--cc-text) !important;
+  border-color: var(--cc-border) !important;
+}
+
+/* Pre-formatted answer blocks (findings view) on dark. */
+main pre {
+  background: #0f1a30 !important;
+  color: var(--cc-text) !important;
+  border: 1px solid var(--cc-border);
+}
+
+/* Muted greys used inline (#57606a / #555) → themed muted text. */
+main [style*="color: #57606a"],
+main [style*="color:#57606a"],
+main [style*="color: #555"],
+main [style*="color:#555"] {
+  color: var(--cc-text-muted) !important;
+}
+
+/* =========================================================================
+ * Cover page background imagery — professional, vaccine/healthcare themed.
+ * Self-contained (inline SVG data-URI, no network images) so it renders
+ * offline during the demo. A faint repeating medical-cross + syringe motif
+ * sits UNDER the dark gradient at low opacity, keeping the Times New Roman
+ * title and the sign-in card fully readable.
+ * ========================================================================= */
+.cc-cover {
+  position: relative;
+  isolation: isolate;
+  /* Layer 1: faint medical motif. Layer 2: dark radial gradient wash. */
+  background-image:
+    radial-gradient(1100px 620px at 50% -12%, rgba(77,132,196,0.16), rgba(15,23,42,0.0)),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%233c527a' stroke-opacity='0.18' stroke-width='2'%3E%3C!-- plus / medical cross --%3E%3Cpath d='M30 18v24M18 30h24'/%3E%3Cpath d='M90 78v24M78 90h24'/%3E%3C!-- syringe --%3E%3Cline x1='64' y1='34' x2='86' y2='56'/%3E%3Cpath d='M82 40l8 8M72 46l6 6'/%3E%3Crect x='58' y='54' width='10' height='18' transform='rotate(45 63 63)'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: cover, 180px 180px;
+  background-position: center top, center;
+  background-repeat: no-repeat, repeat;
+}
+/* A dark veil between the motif and the content so text/cards stay crisp. */
+.cc-cover::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(15,23,42,0.72), rgba(15,23,42,0.9));
+}
+
+/* Very subtle version of the same motif behind each dashboard header bar. */
+main > header {
+  position: relative;
+  overflow: hidden;
+}
+main > header::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.5;
+  pointer-events: none;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%233c527a' stroke-opacity='0.14' stroke-width='2'%3E%3Cpath d='M30 18v24M18 30h24'/%3E%3Cline x1='64' y1='34' x2='86' y2='56'/%3E%3Crect x='58' y='54' width='10' height='18' transform='rotate(45 63 63)'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 150px 150px;
+}
+main > header > * { position: relative; z-index: 1; }

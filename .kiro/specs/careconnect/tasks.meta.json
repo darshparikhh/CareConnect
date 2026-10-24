@@ -1,0 +1,707 @@
+{
+  "pbtResults": {
+    "5.2 Write property test for authorized-service derivation": {
+      "status": "passed",
+      "lastRunTimestamp": 1792868714370
+    },
+    "14.2 Write property test for the authorization hard filter": {
+      "status": "passed",
+      "lastRunTimestamp": 1792868747538
+    },
+    "9.2 Write property test for appointment transitions": {
+      "status": "passed",
+      "lastRunTimestamp": 1792868754664
+    },
+    "15.3 Write property test for the recommendation hard filters": {
+      "status": "passed",
+      "lastRunTimestamp": 1792868783052
+    },
+    "15.7 Write property test for recommendation ranking determinism": {
+      "status": "passed",
+      "lastRunTimestamp": 1792871023494
+    }
+  },
+  "executionHistory": {
+    "1. Set up backend project foundation": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867110212
+      },
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867116900
+      },
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867316956
+      }
+    ],
+    "2.1 Implement enumerations and core SQLAlchemy models": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867110300
+      },
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867322123
+      },
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867666001
+      }
+    ],
+    "3.1 Implement the seed script": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867110329
+      },
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867671104
+      },
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867877301
+      }
+    ],
+    "4.1 Implement Auth_Service": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867110371
+      },
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867671843
+      },
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867878070
+      }
+    ],
+    "5.1 Implement credential recording and `recompute_authorized_services`": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867110396
+      },
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867919579
+      },
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792868212471
+      }
+    ],
+    "6.1 Implement patient, volunteer, and clinician registration": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867110423
+      },
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867922853
+      },
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792868213909
+      }
+    ],
+    "7.1 Implement insurance verification and compatibility": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867110450
+      },
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867923899
+      },
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792868214810
+      }
+    ],
+    "8.1 Implement slot management": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867110484
+      },
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867920489
+      },
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792868215773
+      }
+    ],
+    "9.1 Implement the transition table and `transition`": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867110516
+      },
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867921931
+      },
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792868216888
+      }
+    ],
+    "10.1 Implement `book` with safety gates and transactional slot lock": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867110540
+      },
+      {
+        "executionId": "7519918d-8820-44b6-9788-5530f3e45528",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792868343528
+      },
+      {
+        "executionId": "7519918d-8820-44b6-9788-5530f3e45528",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792868607890
+      }
+    ],
+    "11. Checkpoint - foundation and core services": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867110563
+      }
+    ],
+    "12.1 Implement visit detail and data capture with gating": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867110601
+      },
+      {
+        "executionId": "7519918d-8820-44b6-9788-5530f3e45528",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792868342584
+      },
+      {
+        "executionId": "7519918d-8820-44b6-9788-5530f3e45528",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792868611546
+      }
+    ],
+    "13.1 Implement clinician review, decisions, referrals, and medication gating": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867110629
+      },
+      {
+        "executionId": "7519918d-8820-44b6-9788-5530f3e45528",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792868616083
+      },
+      {
+        "executionId": "7519918d-8820-44b6-9788-5530f3e45528",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792868853421
+      }
+    ],
+    "14.1 Implement hard filters, normalization, scoring, and tie-break": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867110656
+      },
+      {
+        "executionId": "7519918d-8820-44b6-9788-5530f3e45528",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792868344946
+      },
+      {
+        "executionId": "7519918d-8820-44b6-9788-5530f3e45528",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792868609272
+      }
+    ],
+    "15.1 Implement preprocessing, hard filters, weighted scoring, ranking, and cap": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867110692
+      },
+      {
+        "executionId": "7519918d-8820-44b6-9788-5530f3e45528",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792868346044
+      },
+      {
+        "executionId": "7519918d-8820-44b6-9788-5530f3e45528",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792868610708
+      }
+    ],
+    "16. Checkpoint - services and DS engines": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867110725
+      }
+    ],
+    "17.1 Implement auth and registration routes": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867110749
+      },
+      {
+        "executionId": "7519918d-8820-44b6-9788-5530f3e45528",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792868864639
+      },
+      {
+        "executionId": "7519918d-8820-44b6-9788-5530f3e45528",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792869185803
+      }
+    ],
+    "17.2 Implement patient-facing routes": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867110793
+      },
+      {
+        "executionId": "7519918d-8820-44b6-9788-5530f3e45528",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792869182927
+      },
+      {
+        "executionId": "7745501b-98b4-424d-b0ea-cfc6301c99ef",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792869541650
+      }
+    ],
+    "17.3 Implement volunteer-facing routes": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867110819
+      },
+      {
+        "executionId": "7519918d-8820-44b6-9788-5530f3e45528",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792869183856
+      },
+      {
+        "executionId": "7745501b-98b4-424d-b0ea-cfc6301c99ef",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792869580200
+      },
+      {
+        "executionId": "43626bcc-52c2-4460-a91e-e0a01a3f9daa",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792869714008
+      },
+      {
+        "executionId": "43626bcc-52c2-4460-a91e-e0a01a3f9daa",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792869989243
+      }
+    ],
+    "17.4 Implement clinician-facing routes": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867110844
+      },
+      {
+        "executionId": "7519918d-8820-44b6-9788-5530f3e45528",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792869184752
+      },
+      {
+        "executionId": "43626bcc-52c2-4460-a91e-e0a01a3f9daa",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792869990127
+      },
+      {
+        "executionId": "43626bcc-52c2-4460-a91e-e0a01a3f9daa",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792870285028
+      }
+    ],
+    "18.1 Scaffold the Vite + TypeScript SPA with routing and auth": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867110869
+      },
+      {
+        "executionId": "43626bcc-52c2-4460-a91e-e0a01a3f9daa",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792869991208
+      },
+      {
+        "executionId": "43626bcc-52c2-4460-a91e-e0a01a3f9daa",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792870285914
+      }
+    ],
+    "19.1 Build patient dashboard views": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867110891
+      },
+      {
+        "executionId": "43626bcc-52c2-4460-a91e-e0a01a3f9daa",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792870290942
+      },
+      {
+        "executionId": "43626bcc-52c2-4460-a91e-e0a01a3f9daa",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792870523407
+      }
+    ],
+    "20.1 Build volunteer dashboard views": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867110916
+      },
+      {
+        "executionId": "43626bcc-52c2-4460-a91e-e0a01a3f9daa",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792870292391
+      },
+      {
+        "executionId": "43626bcc-52c2-4460-a91e-e0a01a3f9daa",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792870524093
+      }
+    ],
+    "21.1 Build clinician dashboard views": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867110939
+      },
+      {
+        "executionId": "43626bcc-52c2-4460-a91e-e0a01a3f9daa",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792870293062
+      },
+      {
+        "executionId": "43626bcc-52c2-4460-a91e-e0a01a3f9daa",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792870522043
+      }
+    ],
+    "22.1 Implement the demo integration test over the seeded data": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867110963
+      },
+      {
+        "executionId": "43626bcc-52c2-4460-a91e-e0a01a3f9daa",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792870527699
+      },
+      {
+        "executionId": "99a3ea2e-50dc-4af4-a7d6-a11b504158ca",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792870747021
+      }
+    ],
+    "23. Final checkpoint - full journey": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867111000
+      }
+    ],
+    "2. Define the data model and database schema": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867666039
+      }
+    ],
+    "3. Build the deterministic synthetic data seed": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867877337
+      }
+    ],
+    "4. Implement authentication and role-based access control": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867878107
+      }
+    ],
+    "2.2 Write unit tests for model persistence and constraints": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867894426
+      }
+    ],
+    "3.2 Write a test asserting seed determinism": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867895836
+      }
+    ],
+    "4.2 Write example tests for role-based access": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867896812
+      }
+    ],
+    "5.2 Write property test for authorized-service derivation": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867898261
+      },
+      {
+        "executionId": "7519918d-8820-44b6-9788-5530f3e45528",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792868620518
+      },
+      {
+        "executionId": "7519918d-8820-44b6-9788-5530f3e45528",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792868855761
+      }
+    ],
+    "6.2 Write example tests for registration validation messaging": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867899200
+      }
+    ],
+    "7.2 Write example tests for insurance verification": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867900588
+      }
+    ],
+    "8.2 Write unit tests for slot management": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867901533
+      }
+    ],
+    "9.2 Write property test for appointment transitions": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867902466
+      },
+      {
+        "executionId": "7519918d-8820-44b6-9788-5530f3e45528",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792868619385
+      },
+      {
+        "executionId": "7519918d-8820-44b6-9788-5530f3e45528",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792868854859
+      }
+    ],
+    "10.2 Write property test for the consent gate": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867903879
+      }
+    ],
+    "10.3 Write integration test for the concurrent-booking race": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792867904763
+      }
+    ],
+    "5. Implement Credential_Service and authorized-service derivation": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792868212506
+      }
+    ],
+    "6. Implement Registration_Service": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792868213934
+      }
+    ],
+    "7. Implement Insurance_Service": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792868214838
+      }
+    ],
+    "8. Implement Availability_Service": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792868215802
+      }
+    ],
+    "9. Implement the appointment lifecycle state machine": [
+      {
+        "executionId": "e5bee13d-80bb-48e0-a1d4-3072fb9cb4bb",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792868216920
+      }
+    ],
+    "10. Implement Appointment_Service booking and preconditions": [
+      {
+        "executionId": "7519918d-8820-44b6-9788-5530f3e45528",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792868607929
+      }
+    ],
+    "14. Implement the Matching_Engine": [
+      {
+        "executionId": "7519918d-8820-44b6-9788-5530f3e45528",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792868609296
+      }
+    ],
+    "15. Implement the Recommendation_Engine": [
+      {
+        "executionId": "7519918d-8820-44b6-9788-5530f3e45528",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792868610730
+      }
+    ],
+    "12. Implement Visit_Service": [
+      {
+        "executionId": "7519918d-8820-44b6-9788-5530f3e45528",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792868611580
+      }
+    ],
+    "14.2 Write property test for the authorization hard filter": [
+      {
+        "executionId": "7519918d-8820-44b6-9788-5530f3e45528",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792868617037
+      },
+      {
+        "executionId": "7519918d-8820-44b6-9788-5530f3e45528",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792868857208
+      }
+    ],
+    "15.3 Write property test for the recommendation hard filters": [
+      {
+        "executionId": "7519918d-8820-44b6-9788-5530f3e45528",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792868618493
+      },
+      {
+        "executionId": "7519918d-8820-44b6-9788-5530f3e45528",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792868858087
+      }
+    ],
+    "13. Implement Review_Service and medication display rules": [
+      {
+        "executionId": "7519918d-8820-44b6-9788-5530f3e45528",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792868853467
+      }
+    ],
+    "18. Build the React frontend foundation": [
+      {
+        "executionId": "43626bcc-52c2-4460-a91e-e0a01a3f9daa",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792870285946
+      }
+    ],
+    "21. Implement the Clinician_Dashboard": [
+      {
+        "executionId": "43626bcc-52c2-4460-a91e-e0a01a3f9daa",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792870522087
+      }
+    ],
+    "19. Implement the Patient_Dashboard": [
+      {
+        "executionId": "43626bcc-52c2-4460-a91e-e0a01a3f9daa",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792870523446
+      }
+    ],
+    "20. Implement the Volunteer_Dashboard": [
+      {
+        "executionId": "43626bcc-52c2-4460-a91e-e0a01a3f9daa",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792870524132
+      }
+    ],
+    "22. Wire the end-to-end Boston flu demo scenario": [
+      {
+        "executionId": "99a3ea2e-50dc-4af4-a7d6-a11b504158ca",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792870747071
+      }
+    ],
+    "15.7 Write property test for recommendation ranking determinism": [
+      {
+        "executionId": "8bc6ac5b-823d-443f-a83a-cdba4f825258",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792870798963
+      }
+    ],
+    "19.2 Write component tests for the patient dashboard": [
+      {
+        "executionId": "8bc6ac5b-823d-443f-a83a-cdba4f825258",
+        "chatSessionId": "sess_4233e6ac-5289-4263-8be2-e45e53760755",
+        "timestamp": 1792870799800
+      }
+    ]
+  }
+}

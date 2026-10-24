@@ -1,0 +1,13 @@
+# CareConnect backend dependencies
+# Pinned to versions compatible with Python 3.9+ (design target: 3.11).
+
+fastapi==0.111.0
+uvicorn[standard]==0.30.1
+pydantic==2.7.4
+SQLAlchemy==2.0.30
+numpy==1.26.4
+
+# Testing
+pytest==8.2.2
+hypothesis==6.103.1
+httpx==0.27.0
