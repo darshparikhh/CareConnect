@@ -9,6 +9,7 @@ registered here; the patient/volunteer/clinician domain routers (tasks
 
 from __future__ import annotations
 
+import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -23,10 +24,24 @@ from app.database import init_db
 # The Vite dev server origin the React SPA (task 18+) runs on. CORS is opened to
 # this origin so the browser-based frontend can call the API cross-origin during
 # development, including sending the session cookie / Authorization header.
+# Local dev origins (Vite). Production is cross-origin: the Vercel-hosted SPA
+# calls this Render-hosted API, so the deployed frontend's origin must be
+# allowed too. Set FRONTEND_ORIGIN on Render to your exact Vercel URL (e.g.
+# https://care-connect-xyz.vercel.app); any *.vercel.app origin is also allowed
+# via FRONTEND_ORIGIN_REGEX so preview deployments work without reconfiguring.
 FRONTEND_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
 ]
+_env_origin = os.environ.get("FRONTEND_ORIGIN")
+if _env_origin:
+    FRONTEND_ORIGINS.append(_env_origin.rstrip("/"))
+
+# Allow every Vercel deployment domain (production + previews) by default; an
+# explicit regex can override via FRONTEND_ORIGIN_REGEX.
+FRONTEND_ORIGIN_REGEX = os.environ.get(
+    "FRONTEND_ORIGIN_REGEX", r"https://.*\.vercel\.app"
+)
 
 
 @asynccontextmanager
@@ -53,6 +68,7 @@ def create_app() -> FastAPI:
     app.add_middleware(
         CORSMiddleware,
         allow_origins=FRONTEND_ORIGINS,
+        allow_origin_regex=FRONTEND_ORIGIN_REGEX,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
