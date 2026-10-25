@@ -1,0 +1,35 @@
+# Render Blueprint for the CareConnect backend (FastAPI + SQLAlchemy).
+#
+# Deploys a Python web service plus a free hosted Postgres database and wires
+# the database's connection string into the web service's DATABASE_URL env var.
+# On first boot the app creates its schema and auto-seeds demo data (see
+# app/main.py lifespan), so the demo accounts exist immediately.
+#
+# Docs: https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: careconnect-backend
+    runtime: python
+    rootDir: backend
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      # Render pins the Python toolchain via PYTHON_VERSION (3.11 is supported).
+      - key: PYTHON_VERSION
+        value: "3.11"
+      # Postgres connection string, injected from the database resource below.
+      # The app rewrites the postgres:// scheme to postgresql+psycopg:// itself.
+      - key: DATABASE_URL
+        fromDatabase:
+          name: careconnect-db
+          property: connectionString
+      # Exact Vercel frontend origin for CORS. Left unset here on purpose — set
+      # the real URL (e.g. https://care-connect-xyz.vercel.app) in the Render
+      # dashboard. Any *.vercel.app origin is already allowed via the regex.
+      - key: FRONTEND_ORIGIN
+        sync: false
+
+databases:
+  - name: careconnect-db
+    plan: free

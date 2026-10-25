@@ -38,14 +38,10 @@ def create_db_engine(database_url: str | None = None) -> Engine:
     foreign-key enforcement for every new connection.
     """
     url = database_url or get_database_url()
-
-    connect_args = {}
     if _is_sqlite(url):
-        connect_args["check_same_thread"] = False
-
-    engine = create_engine(url, connect_args=connect_args, future=True)
-
-    if _is_sqlite(url):
+        engine = create_engine(
+            url, connect_args={"check_same_thread": False}, future=True
+        )
 
         @event.listens_for(engine, "connect")
         def _enable_sqlite_foreign_keys(dbapi_connection, _connection_record):
@@ -53,7 +49,11 @@ def create_db_engine(database_url: str | None = None) -> Engine:
             cursor.execute("PRAGMA foreign_keys=ON")
             cursor.close()
 
-    return engine
+        return engine
+
+    # Non-sqlite backends (e.g. hosted Postgres): a normal pooled engine with
+    # pre-ping so stale connections are recycled transparently.
+    return create_engine(url, pool_pre_ping=True, future=True)
 
 
 # Module-level engine and session factory bound to the configured database.

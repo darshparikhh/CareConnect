@@ -1,11 +1,14 @@
 # CareConnect backend dependencies
 # Pinned to versions compatible with Python 3.9+ (design target: 3.11).
-
 fastapi==0.111.0
 uvicorn[standard]==0.30.1
 pydantic==2.7.4
 SQLAlchemy==2.0.30
 numpy==1.26.4
+
+# Postgres driver (psycopg v3) for hosted deployments (e.g. Render). SQLite
+# needs no driver, so this is only exercised when DATABASE_URL points at Postgres.
+psycopg[binary]==3.1.19
 
 # Testing
 pytest==8.2.2

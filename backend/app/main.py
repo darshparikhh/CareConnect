@@ -9,6 +9,7 @@ registered here; the patient/volunteer/clinician domain routers (tasks
 
 from __future__ import annotations
 
+import logging
 import os
 from contextlib import asynccontextmanager
 
@@ -19,7 +20,7 @@ from app import __version__
 from app.api import auth_router, patient_router, registration_router
 from app.api import volunteer_router
 from app.api import clinician_router
-from app.database import init_db
+from app.database import init_db, session_scope
 
 # The Vite dev server origin the React SPA (task 18+) runs on. CORS is opened to
 # this origin so the browser-based frontend can call the API cross-origin during
@@ -44,11 +45,36 @@ FRONTEND_ORIGIN_REGEX = os.environ.get(
 )
 
 
+logger = logging.getLogger(__name__)
+
+
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     # Ensure tables exist before serving requests. Importing model modules in
     # later tasks registers them on the shared metadata picked up here.
     init_db()
+    # Auto-seed demo data when the database is empty. A fresh cloud database
+    # (e.g. Render Postgres) comes up with no rows, so without this the demo
+    # accounts would not exist and sign-in would fail. This is idempotent: it
+    # only seeds when there are no Patient rows, and is guarded so a race with
+    # another worker (or an already-seeded DB) never crashes startup.
+    try:
+        from sqlalchemy import select
+
+        from app.models.people import Patient
+        from app.seed import seed as seed_demo_data
+        from app.services.insurance import verify_insurance
+
+        with session_scope() as session:
+            already_seeded = (
+                session.execute(select(Patient.id).limit(1)).first() is not None
+            )
+            if not already_seeded:
+                result = seed_demo_data(session)
+                verify_insurance(session, result.boston_patient)
+                logger.info("Auto-seeded demo data into an empty database.")
+    except Exception:  # noqa: BLE001 - never let seeding crash startup
+        logger.exception("Auto-seed on startup failed; continuing without it.")
     yield
 
 
