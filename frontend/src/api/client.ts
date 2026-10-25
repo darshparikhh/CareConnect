@@ -25,8 +25,8 @@ import { isRole } from "./types";
  *     backend serverless function, so no env var is needed for the frontend.
  */
 export const API_BASE_URL: string =
-  import.meta.env.VITE_API_BASE_URL?.replace(/\/+$/, "") ??
-  (import.meta.env.DEV ? "http://localhost:8000" : "");
+  (import.meta.env.VITE_API_BASE_URL?.replace(/\/+$/, "") ||
+    "http://localhost:8000");
 /**
  * A typed error for any non-2xx API response.
  *
