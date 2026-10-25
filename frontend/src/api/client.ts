@@ -174,3 +174,49 @@ export async function getSession(
   });
   return toSessionResponse(raw);
 }
+/**
+ * Account returned by a successful registration (201).
+ * Mirrors the backend `AccountResponse`: { id, email, role }.
+ */
+export interface AccountResponse {
+  id: number;
+  email: string;
+  role: Role;
+}
+/** Raw registration response before the role is narrowed. */
+interface RawAccountResponse {
+  id: number;
+  email: string;
+  role: string;
+}
+/**
+ * Self-serve patient sign-up (R1.1). The user supplies only email + password;
+ * the remaining required fields are filled with sensible defaults so a new
+ * visitor can create an account and land on the patient dashboard without a
+ * pre-seeded login. Public call (no auth).
+ *
+ * Throws `ApiError` on non-2xx: 409 carries code "account-already-exists",
+ * 400 carries code "missing-required-fields" (with `missingFields`), so the
+ * sign-up page can show friendly messages.
+ */
+export async function registerPatient(
+  email: string,
+  password: string,
+): Promise<AccountResponse> {
+  const raw = await request<RawAccountResponse>("/register/patient", {
+    method: "POST",
+    body: {
+      email,
+      password,
+      location: { lat: 42.3601, lng: -71.0589 },
+      insurance: { plan: "BlueCrossMA", network: "MA" },
+      needs: "general care",
+      pcp: "Self-registered",
+      consent: true,
+    },
+  });
+  if (!isRole(raw.role)) {
+    throw new ApiError(500, `Unexpected role from server: ${raw.role}`);
+  }
+  return { id: raw.id, email: raw.email, role: raw.role as Role };
+}

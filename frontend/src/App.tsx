@@ -3,6 +3,7 @@
  *
  * Public:
  *   /sign-in            → sign-in screen
+ *   /sign-up            → patient self-serve sign-up screen
  *
  * Role-scoped (guarded by RequireRole so only the matching role can view):
  *   /patient            → Patient dashboard
@@ -17,6 +18,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { useAuth } from "./auth/AuthContext";
 import { dashboardPathFor, RequireRole } from "./auth/RequireRole";
 import { SignInPage } from "./pages/SignInPage";
+import { SignUpPage } from "./pages/SignUpPage";
 import { PatientDashboard } from "./pages/PatientDashboard";
 import { VolunteerDashboard } from "./pages/VolunteerDashboard";
 import { ClinicianDashboard } from "./pages/ClinicianDashboard";
@@ -34,6 +36,7 @@ export function App() {
   return (
     <Routes>
       <Route path="/sign-in" element={<SignInPage />} />
+      <Route path="/sign-up" element={<SignUpPage />} />
 
       <Route element={<RequireRole role="patient" />}>
         <Route path="/patient" element={<PatientDashboard />} />

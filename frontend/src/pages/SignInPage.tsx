@@ -10,7 +10,7 @@
 
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { ApiError } from "../api/client";
 import { useAuth } from "../auth/AuthContext";
 import { dashboardPathFor } from "../auth/RequireRole";
@@ -93,6 +93,9 @@ export function SignInPage() {
             {submitting ? "Signing in…" : "Sign in"}
           </button>
         </form>
+        <p className="cc-cover__alt">
+          New here? <Link to="/sign-up">Create an account</Link>
+        </p>
       </section>
 
       <p className="cc-cover__footer">

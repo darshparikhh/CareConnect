@@ -48,16 +48,16 @@ FRONTEND_ORIGIN_REGEX = os.environ.get(
 logger = logging.getLogger(__name__)
 
 
-@asynccontextmanager
-async def lifespan(_app: FastAPI):
-    # Ensure tables exist before serving requests. Importing model modules in
-    # later tasks registers them on the shared metadata picked up here.
+def init_and_seed() -> None:
+    """Create tables and seed demo data if the database is empty (idempotent).
+
+    This runs at app-creation time (not only in the lifespan hook) so the schema
+    always exists regardless of HOW the app is started: uvicorn (local), a bare
+    import by a serverless handler (Vercel), or a TestClient without a lifespan
+    context. Creating tables is a no-op when they already exist, and seeding
+    only happens when there are zero Patient rows, so repeated calls are safe.
+    """
     init_db()
-    # Auto-seed demo data when the database is empty. A fresh cloud database
-    # (e.g. Render Postgres) comes up with no rows, so without this the demo
-    # accounts would not exist and sign-in would fail. This is idempotent: it
-    # only seeds when there are no Patient rows, and is guarded so a race with
-    # another worker (or an already-seeded DB) never crashes startup.
     try:
         from sqlalchemy import select
 
@@ -74,7 +74,13 @@ async def lifespan(_app: FastAPI):
                 verify_insurance(session, result.boston_patient)
                 logger.info("Auto-seeded demo data into an empty database.")
     except Exception:  # noqa: BLE001 - never let seeding crash startup
-        logger.exception("Auto-seed on startup failed; continuing without it.")
+        logger.exception("Auto-seed failed; continuing without it.")
+
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    # Belt-and-suspenders: ensure schema + seed on startup too. Safe/idempotent.
+    init_and_seed()
     yield
 
 
@@ -89,6 +95,10 @@ def create_app() -> FastAPI:
         ),
         lifespan=lifespan,
     )
+
+    # Guarantee the schema exists (and demo data is seeded) as soon as the app
+    # is created, covering serverless/import and TestClient startup paths.
+    init_and_seed()
 
     # Allow the Vite dev-server SPA to call the API cross-origin.
     app.add_middleware(

@@ -255,6 +255,14 @@ form input { width: 100%; }
   font-size: 0.95rem;
   margin: 0;
 }
+.cc-cover__alt {
+  text-align: center;
+  color: var(--cc-text-muted);
+  font-size: 0.9rem;
+  margin: 0.9rem 0 0;
+}
+.cc-cover__alt a { color: var(--cc-text-muted); text-decoration: underline; }
+.cc-cover__alt a:hover { color: var(--cc-text); }
 
 /* =========================================================================
  * Overrides for components that still carry light inline backgrounds
