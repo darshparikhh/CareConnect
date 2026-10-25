@@ -12,7 +12,15 @@
  *  - AppointmentsSection renders appointments with their lifecycle states (R17.1).
  */
 
-import { render, screen, waitFor, within } from "@testing-library/react";
+import { render as baseRender, screen, waitFor, within } from "@testing-library/react";
+import type { ReactElement } from "react";
+import { MemoryRouter } from "react-router-dom";
+
+// Components here use useNavigate (via useAsyncData), so every render needs a
+// Router context. This helper wraps the UI in a MemoryRouter.
+function render(ui: ReactElement) {
+  return baseRender(<MemoryRouter>{ui}</MemoryRouter>);
+}
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import type {

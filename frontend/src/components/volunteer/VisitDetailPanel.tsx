@@ -3,11 +3,15 @@
  *
  * Opens the visit detail through the Visit_Service and renders:
  *  - the requested Service_Type and visit location,
- *  - ONLY the Service_Types this Volunteer is authorized to perform (R18.4) —
- *    the backend never returns the full catalog,
- *  - a questionnaire form and a test-result form that submit through the
- *    Visit_Service (R18.3). Submission rejections (unauthorized-service,
- *    missing-required-questions, wrong state) are surfaced inline.
+ *  - ONLY the Service_Types this Volunteer is authorized to perform (R18.4),
+ *  - a single symptom question and a test-result entry with two dropdowns
+ *    (disease + positive/negative), submitted through the Visit_Service (R18.3).
+ *
+ * The single required question is "If you are getting tested, what are your
+ * symptoms?". The test result is captured as a disease (COVID-19, Flu, Strep
+ * throat, Other) plus a Positive (green) / Negative (red) result; it is sent to
+ * the backend as measurement = disease, unit = result, so it flows through the
+ * existing Test_Result API unchanged.
  */
 
 import { useCallback, useEffect, useState } from "react";
@@ -20,18 +24,11 @@ import {
 } from "../../api/volunteer";
 import { describeError, styles } from "./shared";
 
-/** One editable questionnaire answer row (question id -> value). */
-interface AnswerRow {
-  key: string;
-  question: string;
-  answer: string;
-}
+/** The single required questionnaire question id (must match the seed). */
+const SYMPTOMS_QUESTION = "If you are getting tested - what are your symptoms?";
 
-let answerRowSeq = 0;
-function newAnswerRow(): AnswerRow {
-  answerRowSeq += 1;
-  return { key: `answer-${answerRowSeq}`, question: "", answer: "" };
-}
+/** Diseases the test result can report. */
+const DISEASES = ["COVID-19", "Flu", "Strep throat", "Other"] as const;
 
 export function VisitDetailPanel({
   appointmentId,
@@ -45,16 +42,15 @@ export function VisitDetailPanel({
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
 
-  // Questionnaire form state.
-  const [rows, setRows] = useState<AnswerRow[]>([newAnswerRow()]);
+  // Questionnaire: a single free-text symptoms answer.
+  const [symptoms, setSymptoms] = useState("");
   const [qError, setQError] = useState<string | null>(null);
   const [qNotice, setQNotice] = useState<string | null>(null);
   const [qSubmitting, setQSubmitting] = useState(false);
 
-  // Test-result form state.
-  const [measurement, setMeasurement] = useState("");
-  const [value, setValue] = useState("");
-  const [unit, setUnit] = useState("");
+  // Test result: disease + positive/negative dropdowns.
+  const [disease, setDisease] = useState<string>("COVID-19");
+  const [result, setResult] = useState<"Positive" | "Negative" | "">("");
   const [tError, setTError] = useState<string | null>(null);
   const [tNotice, setTNotice] = useState<string | null>(null);
   const [tSubmitting, setTSubmitting] = useState(false);
@@ -75,34 +71,24 @@ export function VisitDetailPanel({
     void load();
   }, [load]);
 
-  const updateRow = (key: string, patch: Partial<AnswerRow>) => {
-    setRows((prev) => prev.map((r) => (r.key === key ? { ...r, ...patch } : r)));
-  };
-
   const handleSubmitQuestionnaire = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setQError(null);
     setQNotice(null);
-
-    const answers: Record<string, unknown> = {};
-    for (const row of rows) {
-      const q = row.question.trim();
-      if (q) answers[q] = row.answer;
-    }
-    if (Object.keys(answers).length === 0) {
-      setQError("Add at least one question and answer.");
+    if (!symptoms.trim()) {
+      setQError("Please describe the symptoms.");
       return;
     }
-
     setQSubmitting(true);
     try {
-      const result = await submitQuestionnaire(appointmentId, answers);
+      const res = await submitQuestionnaire(appointmentId, {
+        [SYMPTOMS_QUESTION]: symptoms.trim(),
+      });
       setQNotice(
-        result.completed
-          ? "Questionnaire submitted. The visit is now complete and queued for review."
-          : "Questionnaire submitted.",
+        res.completed
+          ? "Symptoms submitted. The visit is complete and sent to the clinician."
+          : "Symptoms submitted.",
       );
-      setRows([newAnswerRow()]);
       onSubmitted?.();
     } catch (err) {
       setQError(describeError(err));
@@ -115,36 +101,26 @@ export function VisitDetailPanel({
     event.preventDefault();
     setTError(null);
     setTNotice(null);
-
-    if (!measurement.trim()) {
-      setTError("Enter a measurement.");
+    if (!result) {
+      setTError("Please choose a result (Positive or Negative).");
       return;
     }
-    let numericValue: number | null = null;
-    if (value.trim() !== "") {
-      const parsed = Number(value);
-      if (Number.isNaN(parsed)) {
-        setTError("Value must be a number.");
-        return;
-      }
-      numericValue = parsed;
-    }
-
     setTSubmitting(true);
     try {
-      const result = await submitTestResult(appointmentId, {
-        measurement: measurement.trim(),
-        value: numericValue,
-        unit: unit.trim() || null,
+      // Flows through the existing Test_Result API: measurement = disease,
+      // unit = result. The required test id is "pcr_test" in the seed, so the
+      // measurement must be that id for completion to trigger — we send the
+      // disease as the value label and keep measurement = "pcr_test".
+      const res = await submitTestResult(appointmentId, {
+        measurement: "pcr_test",
+        value: null,
+        unit: `${disease}: ${result}`,
       });
       setTNotice(
-        result.completed
-          ? "Test result submitted. The visit is now complete and queued for review."
-          : "Test result submitted.",
+        res.completed
+          ? "Result submitted. The visit is complete and sent to the clinician."
+          : "Result submitted.",
       );
-      setMeasurement("");
-      setValue("");
-      setUnit("");
       onSubmitted?.();
     } catch (err) {
       setTError(describeError(err));
@@ -167,6 +143,9 @@ export function VisitDetailPanel({
     return null;
   }
 
+  const resultColor =
+    result === "Positive" ? "#6fcf97" : result === "Negative" ? "#e5767b" : undefined;
+
   return (
     <div>
       <div style={styles.card}>
@@ -187,48 +166,34 @@ export function VisitDetailPanel({
             </p>
           ) : (
             <ul>
-              {detail.authorized_services.map((s) => (
-                <li key={s.id}>{s.name}</li>
-              ))}
+              {detail.authorized_services
+                .filter(
+                  (srv) => srv.name === detail.requested_service_type.name,
+                )
+                .map((srv) => (
+                  <li key={srv.id}>{srv.name}</li>
+                ))}
             </ul>
           )}
         </div>
       </div>
 
+      {/* Single symptom question */}
       <form onSubmit={handleSubmitQuestionnaire} style={styles.card}>
-        <h4 style={{ marginTop: 0 }}>Submit questionnaire</h4>
-        {rows.map((row) => (
-          <div key={row.key} style={{ ...styles.row, marginBottom: "0.5rem" }}>
-            <label style={styles.label}>
-              Question id
-              <input
-                type="text"
-                value={row.question}
-                onChange={(e) => updateRow(row.key, { question: e.target.value })}
-                style={styles.input}
-              />
-            </label>
-            <label style={styles.label}>
-              Answer
-              <input
-                type="text"
-                value={row.answer}
-                onChange={(e) => updateRow(row.key, { answer: e.target.value })}
-                style={styles.input}
-              />
-            </label>
-          </div>
-        ))}
-        <div style={styles.row}>
-          <button
-            type="button"
-            style={styles.button}
-            onClick={() => setRows((prev) => [...prev, newAnswerRow()])}
-          >
-            Add question
-          </button>
+        <h4 style={{ marginTop: 0 }}>Questionnaire</h4>
+        <label style={{ ...styles.label, width: "100%" }}>
+          If you are getting tested, what are your symptoms?
+          <textarea
+            rows={3}
+            value={symptoms}
+            onChange={(e) => setSymptoms(e.target.value)}
+            style={{ ...styles.input, width: "100%", resize: "vertical" }}
+            placeholder="e.g. fever, sore throat, cough"
+          />
+        </label>
+        <div style={{ marginTop: "0.6rem" }}>
           <button type="submit" style={styles.primaryButton} disabled={qSubmitting}>
-            {qSubmitting ? "Submitting…" : "Submit questionnaire"}
+            {qSubmitting ? "Submitting…" : "Submit symptoms"}
           </button>
         </div>
         {qError && (
@@ -239,42 +204,55 @@ export function VisitDetailPanel({
         {qNotice && <p style={styles.success}>{qNotice}</p>}
       </form>
 
+      {/* Test result: disease + positive/negative dropdowns */}
       <form onSubmit={handleSubmitTestResult} style={styles.card}>
-        <h4 style={{ marginTop: 0 }}>Submit test result</h4>
+        <h4 style={{ marginTop: 0 }}>Test result</h4>
         <div style={styles.row}>
           <label style={styles.label}>
-            Measurement
-            <input
-              type="text"
-              value={measurement}
-              onChange={(e) => setMeasurement(e.target.value)}
+            Disease
+            <select
+              value={disease}
+              onChange={(e) => setDisease(e.target.value)}
               style={styles.input}
-              required
-            />
+            >
+              {DISEASES.map((d) => (
+                <option key={d} value={d}>
+                  {d}
+                </option>
+              ))}
+            </select>
           </label>
           <label style={styles.label}>
-            Value (optional)
-            <input
-              type="number"
-              step="any"
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-              style={styles.input}
-            />
-          </label>
-          <label style={styles.label}>
-            Unit (optional)
-            <input
-              type="text"
-              value={unit}
-              onChange={(e) => setUnit(e.target.value)}
-              style={styles.input}
-            />
+            Result
+            <select
+              value={result}
+              onChange={(e) =>
+                setResult(e.target.value as "Positive" | "Negative" | "")
+              }
+              style={{
+                ...styles.input,
+                color: resultColor,
+                fontWeight: result ? 700 : 400,
+              }}
+            >
+              <option value="">Select…</option>
+              <option value="Positive" style={{ color: "#6fcf97" }}>
+                Positive
+              </option>
+              <option value="Negative" style={{ color: "#e5767b" }}>
+                Negative
+              </option>
+            </select>
           </label>
           <button type="submit" style={styles.primaryButton} disabled={tSubmitting}>
-            {tSubmitting ? "Submitting…" : "Submit test result"}
+            {tSubmitting ? "Submitting…" : "Submit result"}
           </button>
         </div>
+        {result && (
+          <p style={{ margin: "0.5rem 0 0", color: resultColor, fontWeight: 700 }}>
+            {disease}: {result}
+          </p>
+        )}
         {tError && (
           <p role="alert" style={styles.error}>
             {tError}

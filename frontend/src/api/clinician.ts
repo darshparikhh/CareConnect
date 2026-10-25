@@ -65,6 +65,18 @@ export interface ClinicianReferralResponse {
   specialty: string;
 }
 
+/** A bundled MA hospital for the referral dropdown. Mirrors `HospitalResponse`. */
+export interface ClinicianHospital {
+  facility_name: string;
+  address: string;
+  citytown: string;
+  zip_code: string;
+  telephone_number: string;
+  hospital_type: string;
+  hospital_overall_rating: string;
+  zip_distance: number;
+}
+
 /**
  * GET the review queue: completed appointments still queued for review (R19.1).
  */
@@ -109,6 +121,13 @@ export function approveDecision(
     `/clinician/appointments/${appointmentId}/decision/approve`,
     { method: "POST", auth: true },
   );
+}
+
+/**
+ * GET the full list of bundled MA hospitals for the referral dropdown (R19.3).
+ */
+export function fetchHospitals(): Promise<ClinicianHospital[]> {
+  return request<ClinicianHospital[]>("/clinician/hospitals", { auth: true });
 }
 
 /**

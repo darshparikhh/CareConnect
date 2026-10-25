@@ -98,7 +98,7 @@ def _seed_world(session_factory: sessionmaker) -> dict:
             longitude=-71.0590,
         )
         verified_clinician = Clinician(
-            email="clinician.verified@example.com",
+            email="doctor1@example.com",
             password_hash=hash_password(CLINICIAN_PASSWORD),
             role=Role.clinician,
             latitude=42.0,

@@ -48,6 +48,7 @@ from app.api.schemas import (
     ClinicianReferralResponse,
     DecisionCreateRequest,
     FindingsResponse,
+    HospitalResponse,
     QuestionnaireFinding,
     ReferralCreateRequest,
     ReviewQueueItem,
@@ -57,6 +58,7 @@ from app.models.appointment import Appointment
 from app.models.enums import AppointmentState, Role
 from app.models.people import Clinician
 from app.services import review
+from app.services.hospitals import all_hospitals
 
 router = APIRouter(prefix="/clinician", tags=["clinician"])
 
@@ -153,6 +155,25 @@ def review_queue(
         .all()
     )
     return [_queue_item(a) for a in appointments]
+
+
+# ---------------------------------------------------------------------------
+# Hospital list for referral dropdown (R12.1)
+# ---------------------------------------------------------------------------
+@router.get("/hospitals", response_model=List[HospitalResponse])
+def list_hospitals_for_referral(
+    session: AuthSession = Depends(require_clinician),
+    db: DBSession = Depends(get_session),
+) -> List[HospitalResponse]:
+    """List every bundled MA hospital for the referral dropdown (R12.1).
+
+    Resolves the current Clinician first (so a stale token 401s), then returns
+    the full MA hospital list projected to ``HospitalResponse``. There is no
+    patient-ZIP context here, so the list is alphabetical by ``facility_name``
+    rather than ranked by proximity.
+    """
+    _current_clinician(session, db)
+    return [HospitalResponse(**h) for h in all_hospitals()]
 
 
 # ---------------------------------------------------------------------------

@@ -7,7 +7,9 @@
 
 import type { CSSProperties, ReactNode } from "react";
 import { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ApiError } from "../../api/client";
+import { clearSession } from "../../auth/storage";
 
 /** A dashboard card with a title and body. */
 export function Card({
@@ -71,6 +73,7 @@ export function useAsyncData<T>(
   const [tick, setTick] = useState(0);
 
   const reload = useCallback(() => setTick((t) => t + 1), []);
+  const navigate = useNavigate();
 
   useEffect(() => {
     let cancelled = false;
@@ -82,6 +85,14 @@ export function useAsyncData<T>(
       })
       .catch((err: unknown) => {
         if (cancelled) return;
+        // A 401 means the stored session is missing/stale/invalid. Rather than
+        // splashing "authentication-required" across every card, clear the bad
+        // session and send the user to sign in cleanly.
+        if (err instanceof ApiError && err.status === 401) {
+          clearSession();
+          navigate("/sign-in", { replace: true });
+          return;
+        }
         setError(
           err instanceof ApiError
             ? err.message

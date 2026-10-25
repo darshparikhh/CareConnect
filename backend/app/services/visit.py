@@ -143,16 +143,50 @@ def _is_authorized(volunteer: Volunteer, appointment: Appointment) -> bool:
     return appointment.service_type_id in _authorized_service_ids(volunteer)
 
 
+def _answered_entry_question_id(entry: str) -> Optional[str]:
+    """Extract the question id from one stored answer entry.
+
+    Entries are stored as ``"question id: answer text"`` (R10.5); the id is the
+    substring before the first ``": "`` (colon-space). The parser is tolerant:
+    an entry with no ``": "`` is treated as a bare id (old id-only data), and an
+    empty/blank entry yields nothing.
+    """
+    entry = entry.strip()
+    if not entry:
+        return None
+    marker = ": "
+    index = entry.find(marker)
+    if index != -1:
+        return entry[:index].strip() or None
+    return entry
+
+
 def _answered_question_ids(appointment: Appointment) -> Set[str]:
     """Every question id answered across the appointment's questionnaires.
 
-    Questionnaire answers are stored as comma-separated answered-question
-    identifiers in ``Questionnaire.answers``; completion (R10.5) is about which
-    required questions have an answer somewhere against this appointment.
+    Questionnaire answers are stored as newline-separated
+    ``"question id: answer text"`` lines in ``Questionnaire.answers``;
+    completion (R10.5) is about which required questions have an answer
+    somewhere against this appointment. The id of each line is the part before
+    the first ``": "``. For robustness with legacy comma-separated id-only
+    data, a line that carries no ``": "`` is split further on commas.
     """
     answered: Set[str] = set()
     for questionnaire in appointment.questionnaires:
-        answered.update(_split_csv(questionnaire.answers))
+        raw = questionnaire.answers
+        if not raw:
+            continue
+        for line in raw.split("\n"):
+            line = line.strip()
+            if not line:
+                continue
+            if ": " in line:
+                question_id = _answered_entry_question_id(line)
+                if question_id:
+                    answered.add(question_id)
+            else:
+                # Legacy id-only line: may itself be a comma-separated id list.
+                answered.update(_split_csv(line))
     return answered
 
 
@@ -314,10 +348,12 @@ def submit_questionnaire(
             missing_questions=missing,
         )
 
-    # Record the answers (R10.1). Store the answered-question ids as the compact
-    # CSV the completion check reads back.
-    answered_ids = [
-        question_id
+    # Record the answers (R10.1). Store each answered question as a
+    # newline-separated "question id: answer text" line so the clinician can
+    # see the volunteer's typed words, while the completion check (which parses
+    # the id before the first ": ") still reads back the answered-question ids.
+    answered_entries = [
+        f"{question_id}: {answers[question_id]}"
         for question_id in answers
         if answers[question_id] is not None
         and not (
@@ -328,7 +364,7 @@ def submit_questionnaire(
     questionnaire = Questionnaire(
         appointment_id=appointment.id,
         service_type_id=appointment.service_type_id,
-        answers=",".join(answered_ids),
+        answers="\n".join(answered_entries),
         required_question_ids=appointment.service_type.required_questions,
     )
     db.add(questionnaire)

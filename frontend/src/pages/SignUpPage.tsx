@@ -15,7 +15,7 @@ import { ApiError, registerPatient } from "../api/client";
 import { useAuth } from "../auth/AuthContext";
 import { dashboardPathFor } from "../auth/RequireRole";
 export function SignUpPage() {
-  const { session, loading, signIn } = useAuth();
+  const { session, loading, signIn, signOut } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,6 +30,9 @@ export function SignUpPage() {
     setError(null);
     setSubmitting(true);
     try {
+      // Clear any stale/old session first so a leftover token from a previous
+      // (now-reset) account can't interfere with the fresh sign-up.
+      signOut();
       await registerPatient(email, password);
       // Account created: sign in to store the session like a normal login.
       await signIn(email, password);

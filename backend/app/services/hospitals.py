@@ -129,3 +129,29 @@ def nearby_hospitals(
 
     scored.sort(key=lambda h: (h["zip_distance"], h["facility_name"]))
     return scored[:limit]
+
+
+def all_hospitals(limit: Optional[int] = None) -> List[dict]:
+    """List every bundled MA hospital for a selection dropdown.
+
+    Unlike :func:`nearby_hospitals`, there is no patient-ZIP context here, so no
+    proximity ranking is applied: every record is projected with
+    ``zip_distance=0`` (reusing the shared :func:`_project` helper) and the list
+    is sorted alphabetically by ``facility_name``. The projection keys match
+    ``HospitalResponse``.
+
+    Args:
+        limit: Optional cap on the number of hospitals returned. ``None`` (the
+            default) returns the full list.
+
+    Returns:
+        A list of trimmed dicts, each with ``facility_name``, ``address``,
+        ``citytown``, ``zip_code``, ``telephone_number``, ``hospital_type``,
+        ``hospital_overall_rating`` and a ``zip_distance`` of ``0``, sorted
+        ascending by ``facility_name``.
+    """
+    projected = [_project(hospital, 0) for hospital in _load()]
+    projected.sort(key=lambda h: h["facility_name"])
+    if limit is not None:
+        return projected[:limit]
+    return projected

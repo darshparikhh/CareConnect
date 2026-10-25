@@ -4,25 +4,40 @@
  * For the selected appointment, lets the clinician:
  *  - record a Clinical_Decision (R19.3) — surfacing 400 decision-content-required
  *    and 403 credential-not-verified from the Review_Service;
- *  - issue a specialty Referral (R19.3) — surfacing the content/no-decision errors;
+ *  - issue a hospital Referral (R19.3) — the clinician picks a bundled MA
+ *    hospital from a dropdown; its label is stored as the referral specialty;
  *  - approve the stored decision for patient visibility (R19.4) — surfacing
  *    409 no-decision-to-approve.
  *
  * Owns its own form + request state. On a successful record/approve it calls
  * `onChanged` so the parent can refresh the queue (the `reviewed` flag moves).
  */
-
 import { useEffect, useState } from "react";
 import { ApiError } from "../../api/client";
 import {
   approveDecision,
+  fetchHospitals,
   issueReferral,
   recordDecision,
 } from "../../api/clinician";
-import type { ClinicianDecisionResponse } from "../../api/clinician";
+import type {
+  ClinicianDecisionResponse,
+  ClinicianHospital,
+} from "../../api/clinician";
+
+/** The referral value recorded for a hospital — a readable label. */
+function hospitalLabel(h: ClinicianHospital): string {
+  return `${h.facility_name} — ${h.citytown}`;
+}
 
 /** Map an unknown thrown value to a human-readable message for this panel. */
 function messageFor(err: unknown): string {
+  if (err instanceof Error && err.message === "empty") {
+    return "Write instructions for the patient before submitting.";
+  }
+  if (err instanceof Error && err.message === "no-hospital") {
+    return "Select a hospital to refer to.";
+  }
   if (err instanceof ApiError) {
     switch (err.code) {
       case "decision-content-required":
@@ -41,10 +56,11 @@ function messageFor(err: unknown): string {
 }
 
 const card: React.CSSProperties = {
-  border: "1px solid #d0d7de",
+  border: "1px solid var(--cc-border)",
   borderRadius: 6,
   padding: "0.75rem",
-  background: "#fff",
+  background: "var(--cc-surface)",
+  color: "var(--cc-text)",
   display: "grid",
   gap: "1rem",
 };
@@ -53,16 +69,18 @@ const fieldStyle: React.CSSProperties = {
   width: "100%",
   boxSizing: "border-box",
   padding: "0.5rem",
-  border: "1px solid #d0d7de",
+  border: "1px solid var(--cc-border-strong)",
+  background: "#0f1a30",
+  color: "var(--cc-text)",
   borderRadius: 4,
   font: "inherit",
 };
 
 const buttonStyle: React.CSSProperties = {
   padding: "0.5rem 0.9rem",
-  border: "1px solid #0969da",
+  border: "1px solid var(--cc-primary)",
   borderRadius: 6,
-  background: "#0969da",
+  background: "var(--cc-primary)",
   color: "#fff",
   cursor: "pointer",
 };
@@ -76,7 +94,9 @@ export function DecisionPanel({
 }) {
   const [decision, setDecision] = useState<ClinicianDecisionResponse | null>(null);
   const [content, setContent] = useState("");
-  const [specialty, setSpecialty] = useState("");
+  const [hospitals, setHospitals] = useState<ClinicianHospital[]>([]);
+  const [hospitalsError, setHospitalsError] = useState<string | null>(null);
+  const [selectedHospital, setSelectedHospital] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
@@ -85,17 +105,41 @@ export function DecisionPanel({
   useEffect(() => {
     setDecision(null);
     setContent("");
-    setSpecialty("");
+    setSelectedHospital("");
     setBusy(false);
     setError(null);
     setNotice(null);
+  }, [appointmentId]);
+
+  // Load the hospital list once an appointment is selected. A load failure is
+  // shown quietly and does not block recording a decision.
+  useEffect(() => {
+    if (appointmentId === null) {
+      return;
+    }
+    let active = true;
+    setHospitalsError(null);
+    fetchHospitals()
+      .then((list) => {
+        if (active) {
+          setHospitals(list);
+        }
+      })
+      .catch(() => {
+        if (active) {
+          setHospitalsError("Couldn't load the hospital list.");
+        }
+      });
+    return () => {
+      active = false;
+    };
   }, [appointmentId]);
 
   if (appointmentId === null) {
     return (
       <section aria-label="Decision" style={{ ...card }}>
         <h2 style={{ margin: 0 }}>Decision</h2>
-        <p style={{ color: "#57606a", margin: 0 }}>
+        <p style={{ color: "var(--cc-text-muted)", margin: 0 }}>
           Select an appointment to record a decision.
         </p>
       </section>
@@ -115,87 +159,99 @@ export function DecisionPanel({
     }
   }
 
-  const onRecord = () =>
+  // One-click submit: record the decision AND approve it so the patient sees it
+  // as soon as they refresh. This matches the demo flow — the clinician writes
+  // what to do, clicks Submit, and it appears on the patient dashboard.
+  const onSubmit = () =>
     run(async () => {
-      const result = await recordDecision(appointmentId, content);
-      setDecision(result);
-      setNotice("Decision recorded. Approve it to make it visible to the patient.");
-      onChanged();
-    });
-
-  const onApprove = () =>
-    run(async () => {
-      const result = await approveDecision(appointmentId);
-      setDecision(result);
-      setNotice("Decision approved and now visible to the patient.");
+      if (!content.trim()) {
+        throw new Error("empty");
+      }
+      await recordDecision(appointmentId, content);
+      const approved = await approveDecision(appointmentId);
+      setDecision(approved);
+      setNotice("Sent to the patient. They'll see it when they refresh.");
       onChanged();
     });
 
   const onRefer = () =>
     run(async () => {
-      const result = await issueReferral(appointmentId, specialty);
-      setSpecialty("");
-      setNotice(`Referral issued for ${result.specialty}.`);
+      if (!selectedHospital) {
+        throw new Error("no-hospital");
+      }
+      await issueReferral(appointmentId, selectedHospital);
+      const label = selectedHospital;
+      setSelectedHospital("");
+      setNotice(`Referral issued to ${label}.`);
     });
 
   return (
     <section aria-label="Decision" style={{ ...card }}>
       <h2 style={{ margin: 0 }}>Decision for appointment #{appointmentId}</h2>
-
       {error && (
-        <p role="alert" style={{ color: "#b42318", margin: 0 }}>
+        <p role="alert" style={{ color: "var(--cc-danger)", margin: 0 }}>
           {error}
         </p>
       )}
       {notice && (
-        <p role="status" style={{ color: "#1a7f37", margin: 0 }}>
+        <p role="status" style={{ color: "var(--cc-success)", margin: 0 }}>
           {notice}
         </p>
       )}
-
       {/* Record a clinical decision (R19.3) */}
       <div style={{ display: "grid", gap: "0.5rem" }}>
         <label htmlFor="decision-content">
-          <strong>Clinical decision</strong>
+          <strong>What should the patient do?</strong>
         </label>
         <textarea
           id="decision-content"
-          rows={4}
+          rows={5}
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder="Document your clinical decision…"
+          placeholder="Write instructions for the patient — e.g. You tested positive for COVID-19. Rest, hydrate, take Tylenol for fever, and isolate for 5 days…"
           style={fieldStyle}
         />
         <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-          <button type="button" onClick={onRecord} disabled={busy} style={buttonStyle}>
-            Record decision
-          </button>
-          <button type="button" onClick={onApprove} disabled={busy} style={buttonStyle}>
-            Approve for patient
+          <button type="button" onClick={onSubmit} disabled={busy} style={buttonStyle}>
+            {busy ? "Submitting…" : "Submit to patient"}
           </button>
         </div>
       </div>
-
       {decision && (
-        <p style={{ margin: 0, color: "#57606a" }}>
+        <p style={{ margin: 0, color: "var(--cc-text-muted)" }}>
           Current decision is{" "}
           <strong>{decision.approved ? "approved" : "recorded, not yet approved"}</strong>.
         </p>
       )}
-
-      {/* Issue a referral (R19.3) */}
+      {/* Issue a referral to a hospital (R19.3) */}
       <div style={{ display: "grid", gap: "0.5rem" }}>
-        <label htmlFor="referral-specialty">
-          <strong>Referral specialty</strong>
+        <label htmlFor="referral-hospital">
+          <strong>Refer to a hospital</strong>
         </label>
+        {hospitalsError && (
+          <p style={{ color: "var(--cc-text-muted)", margin: 0, fontSize: "0.85rem" }}>
+            {hospitalsError}
+          </p>
+        )}
         <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-          <input
-            id="referral-specialty"
-            value={specialty}
-            onChange={(e) => setSpecialty(e.target.value)}
-            placeholder="e.g. cardiology"
-            style={{ ...fieldStyle, maxWidth: 260 }}
-          />
+          <select
+            id="referral-hospital"
+            value={selectedHospital}
+            onChange={(e) => setSelectedHospital(e.target.value)}
+            style={{ ...fieldStyle, maxWidth: 360 }}
+          >
+            <option value="" disabled>
+              Select a hospital…
+            </option>
+            {hospitals.map((h) => {
+              const label = hospitalLabel(h);
+              return (
+                <option key={label} value={label}>
+                  {label}
+                </option>
+              );
+            })}
+          </select>
           <button type="button" onClick={onRefer} disabled={busy} style={buttonStyle}>
             Issue referral
           </button>

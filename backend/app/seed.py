@@ -7,7 +7,7 @@ headline Boston patient. Everything is synthetic.
 
 The demo service is a repurposed ``vaccination`` Service_Type that drives a
 realistic PCR symptom screen (two readable questions) plus a recorded PCR test
-result. A verified clinician (``clinician.verified@example.com``) reviews the
+result. A verified clinician (``doctor1@example.com``) reviews the
 completed visit; the Boston patient (``boston.flu.patient@example.com``) then
 sees the approved decision and nearby hospitals.
 
@@ -67,10 +67,14 @@ def _seed_service_types(session: Session) -> Dict[str, ServiceType]:
         ServiceType(
             name="vaccination",
             required_tests="pcr_test",
-            required_questions="What are your symptoms?,When did this onset occur?",
+            required_questions="If you are getting tested - what are your symptoms?",
         ),
         ServiceType(name="specimen_collection", required_tests=None, required_questions=None),
-        ServiceType(name="diagnostic_test", required_tests="rapid_antigen", required_questions=None),
+        ServiceType(
+            name="diagnostic_test",
+            required_tests="pcr_test",
+            required_questions="If you are getting tested - what are your symptoms?",
+        ),
         ServiceType(name="wellness_check", required_tests=None, required_questions=None),
     ]
     session.add_all(service_types)
@@ -107,6 +111,7 @@ def _seed_volunteers(
     the demo vaccination/PCR service (verified credential + satisfied MA
     state-license condition)."""
     vaccination = service_types["vaccination"]
+    diagnostic_test = service_types["diagnostic_test"]
 
     # (display name, email, lat, lng, neighborhood)
     standin_specs = [
@@ -145,6 +150,7 @@ def _seed_volunteers(
             expires_at=_EPOCH.replace(year=2027),
         )
         cred.authorizes_service_types.append(vaccination)
+        cred.authorizes_service_types.append(diagnostic_test)
         cred.conditions.append(
             CredentialCondition(kind="state_license_MA", satisfied=True)
         )
@@ -158,9 +164,12 @@ def _seed_volunteers(
     for volunteer in volunteers:
         _add_slot(volunteer, start_hour=9, duration_hours=2)
         _add_slot(volunteer, start_hour=13, duration_hours=2)
+        # Round-the-clock coverage: a full 24h available window for each of
+        # the next 14 days, so a patient can book any time of any day and a
+        # qualified volunteer is available (demo convenience).
         for day_offset in range(0, 14):
-            day = (now + timedelta(days=day_offset)).replace(hour=8)
-            _add_slot(volunteer, start=day, duration_hours=4)
+            day = (now + timedelta(days=day_offset)).replace(hour=0)
+            _add_slot(volunteer, start=day, duration_hours=24)
     session.flush()
 
     # Materialize the derived Authorized_Services join for every volunteer.
@@ -174,7 +183,7 @@ def _seed_volunteers(
 def _seed_clinicians(session: Session) -> List[Clinician]:
     """One verified and one unverified clinician for contrast."""
     verified = Clinician(
-        email="clinician.verified@example.com",
+        email="doctor1@example.com",
         password_hash=_hash_password(_DEMO_PASSWORD),
         role=Role.clinician,
         latitude=42.3611,

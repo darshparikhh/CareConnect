@@ -6,22 +6,20 @@
  * parent dashboard. Presentation only — the backend owns which appointments
  * appear in the queue.
  */
-
 import type { ReviewQueueItem } from "../../api/clinician";
-
 const rowBase: React.CSSProperties = {
   display: "flex",
   justifyContent: "space-between",
   gap: "0.75rem",
   width: "100%",
   padding: "0.6rem 0.75rem",
-  border: "1px solid #d0d7de",
+  border: "1px solid var(--cc-border)",
   borderRadius: 6,
-  background: "#fff",
+  background: "var(--cc-surface-2)",
+  color: "var(--cc-text)",
   cursor: "pointer",
   textAlign: "left",
 };
-
 export function ReviewQueue({
   items,
   selectedId,
@@ -38,21 +36,18 @@ export function ReviewQueue({
   return (
     <section aria-label="Review queue">
       <h2>Review queue</h2>
-      <p style={{ color: "#57606a", marginTop: 0 }}>
+      <p style={{ color: "var(--cc-text-muted)", marginTop: 0 }}>
         Completed appointments queued for your review.
       </p>
-
       {loading && <p>Loading review queue…</p>}
       {error && (
-        <p role="alert" style={{ color: "#b42318" }}>
+        <p role="alert" style={{ color: "var(--cc-danger)" }}>
           {error}
         </p>
       )}
-
       {!loading && !error && items.length === 0 && (
         <p>No appointments are waiting for review.</p>
       )}
-
       <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "grid", gap: "0.5rem" }}>
         {items.map((item) => {
           const selected = item.appointment_id === selectedId;
@@ -64,14 +59,14 @@ export function ReviewQueue({
                 onClick={() => onSelect(item.appointment_id)}
                 style={{
                   ...rowBase,
-                  borderColor: selected ? "#0969da" : "#d0d7de",
-                  boxShadow: selected ? "0 0 0 1px #0969da" : "none",
+                  borderColor: selected ? "var(--cc-primary)" : "var(--cc-border)",
+                  boxShadow: selected ? "0 0 0 1px var(--cc-primary)" : "none",
                 }}
               >
                 <span>
                   <strong>Appointment #{item.appointment_id}</strong>
                   <br />
-                  <span style={{ color: "#57606a" }}>
+                  <span style={{ color: "var(--cc-text-muted)" }}>
                     {item.service_type || "service"} · patient #{item.patient_id} ·
                     volunteer #{item.volunteer_id}
                   </span>
@@ -80,7 +75,7 @@ export function ReviewQueue({
                   style={{
                     alignSelf: "center",
                     fontSize: "0.85rem",
-                    color: item.reviewed ? "#1a7f37" : "#9a6700",
+                    color: item.reviewed ? "var(--cc-success)" : "var(--cc-warning)",
                   }}
                 >
                   {item.reviewed ? "reviewed" : "awaiting decision"}
